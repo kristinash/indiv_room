@@ -3,119 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Корнуэльская комната с зеркалами</title>
+    <link rel="icon" href="data:image/gif;base64,R0lGODlhEAAQAMQfANPT09TU1NXV1dbW1tfX19jY2NnZ2dra2tzc3N3d3d7e3t/f3+Dg4OHh4eLi4uPj4+Tk5OXl5ebm5ufn5+jo6Onp6erq6uvr6+zs7O3t7e7u7u/v7/Dw8PHx8fLy8gD/AP///yH5BAEAAB8ALAAAAAAQABAAAAVq4CeOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otHrNbrvf8Lh8Tq/b7/i8fs/v+/+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmVqRADs=">
+    <title>Корнуэльская комната - Рейтрейсинг</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="scene-container"></div>
-    
-    <div class="controls-panel">
-        <div class="controls-title">Управление сценой</div>
-        
-        <div class="control-group">
-            <div class="control-group-title">Основной свет (сверху)</div>
-            
-            <div class="slider-group">
-                <div class="slider-label">Сила:</div>
-                <input type="range" id="mainLightIntensity" min="0" max="3" step="0.1" value="1.0">
-                <div class="slider-value" id="mainLightIntensityValue">1.0</div>
+    <div class="container">
+
+        <div class="main-content">
+            <div class="render-section">
+                <canvas id="canvas">Элемент canvas не поддерживается</canvas>
             </div>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-group-title">Дополнительный свет</div>
-            
-            <div class="toggle-group">
-                <span class="toggle-label">Включить свет</span>
-                <input type="checkbox" id="additionalLightToggle" checked>
+
+            <div class="controls-section">
+                <div class="control-group">
+                    <h3>Объекты сцены</h3>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item sphere1">
+                            <input type="checkbox" id="sphere1-reflective">
+                            <div class="color-preview"></div>
+                            <label for="sphere1-reflective">Сфера 1 (зеркало)</label>
+                        </div>
+                        <div class="checkbox-item sphere1">
+                            <input type="checkbox" id="sphere1-transparent">
+                            <div class="color-preview"></div>
+                            <label for="sphere1-transparent">Сфера 1 (прозрачность)</label>
+                        </div>
+                        <div class="checkbox-item sphere2">
+                            <input type="checkbox" id="sphere2-reflective">
+                            <div class="color-preview"></div>
+                            <label for="sphere2-reflective">Сфера 2 (зеркало)</label>
+                        </div>
+                        <div class="checkbox-item sphere2">
+                            <input type="checkbox" id="sphere2-transparent">
+                            <div class="color-preview"></div>
+                            <label for="sphere2-transparent">Сфера 2 (прозрачность)</label>
+                        </div>
+                        <div class="checkbox-item cube1">
+                            <input type="checkbox" id="cube1-reflective">
+                            <div class="color-preview"></div>
+                            <label for="cube1-reflective">Куб 1 (зеркало)</label>
+                        </div>
+                        <div class="checkbox-item cube1">
+                            <input type="checkbox" id="cube1-transparent">
+                            <div class="color-preview"></div>
+                            <label for="cube1-transparent">Куб 1 (прозрачность)</label>
+                        </div>
+                        <div class="checkbox-item cube2">
+                            <input type="checkbox" id="cube2-reflective">
+                            <div class="color-preview"></div>
+                            <label for="cube2-reflective">Куб 2 (зеркало)</label>
+                        </div>
+                        <div class="checkbox-item cube2">
+                            <input type="checkbox" id="cube2-transparent">
+                            <div class="color-preview"></div>
+                            <label for="cube2-transparent">Куб 2 (стекло)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Стены (зеркальные)</h3>
+                    <div class="checkbox-grid">
+                        <div class="checkbox-item wall">
+                            <input type="checkbox" id="upwall-reflective">
+                            <div class="color-preview"></div>
+                            <label for="upwall-reflective">Верхняя</label>
+                        </div>
+                        <div class="checkbox-item wall">
+                            <input type="checkbox" id="downwall-reflective">
+                            <div class="color-preview"></div>
+                            <label for="downwall-reflective">Нижняя</label>
+                        </div>
+                        <div class="checkbox-item wall">
+                            <input type="checkbox" id="leftwall-reflective">
+                            <div class="color-preview"></div>
+                            <label for="leftwall-reflective">Левая</label>
+                        </div>
+                        <div class="checkbox-item wall">
+                            <input type="checkbox" id="rightwall-reflective">
+                            <div class="color-preview"></div>
+                            <label for="rightwall-reflective">Правая</label>
+                        </div>
+                        <div class="checkbox-item wall">
+                            <input type="checkbox" id="frontwall-reflective">
+                            <div class="color-preview"></div>
+                            <label for="frontwall-reflective">Передняя</label>
+                        </div>
+                        <div class="checkbox-item wall">
+                            <input type="checkbox" id="backwall-reflective">
+                            <div class="color-preview"></div>
+                            <label for="backwall-reflective">Задняя</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="light1-toggle">
+                        <label for="light1-toggle">Второй источник света</label>
+                    </div>
+                    
+                    <div id="light-controls-container" style="display: none;">
+                        <div class="slider-container">
+                            <label>Позиция X:</label>
+                            <input type="range" id="light-x" min="-15" max="15" value="-9" step="0.5">
+                            <div class="value-display">
+                                <span>-15</span>
+                                <span id="light-x-value">-9</span>
+                                <span>15</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <label>Позиция Y:</label>
+                            <input type="range" id="light-y" min="-15" max="15" value="0" step="0.5">
+                            <div class="value-display">
+                                <span>-15</span>
+                                <span id="light-y-value">0</span>
+                                <span>15</span>
+                            </div>
+                        </div>
+                        <div class="slider-container">
+                            <label>Позиция Z:</label>
+                            <input type="range" id="light-z" min="-15" max="15" value="2" step="0.5">
+                            <div class="value-display">
+                                <span>-15</span>
+                                <span id="light-z-value">2</span>
+                                <span>15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="render-btn-container">
+                    <button id="render" class="render-btn">Запустить рендеринг</button>
+                </div>
             </div>
-            
-            <div class="slider-group">
-                <div class="slider-label">X:</div>
-                <input type="range" id="lightX" min="-10" max="10" step="1" value="5">
-                <div class="slider-value" id="lightXValue">5</div>
-            </div>
-            
-            <div class="slider-group">
-                <div class="slider-label">Y:</div>
-                <input type="range" id="lightY" min="-10" max="10" step="1" value="5">
-                <div class="slider-value" id="lightYValue">5</div>
-            </div>
-            
-            <div class="slider-group">
-                <div class="slider-label">Z:</div>
-                <input type="range" id="lightZ" min="-10" max="10" step="1" value="5">
-                <div class="slider-value" id="lightZValue">5</div>
-            </div>
-            
-            <div class="slider-group">
-                <div class="slider-label">Сила:</div>
-                <input type="range" id="lightIntensity" min="0" max="3" step="0.1" value="1.5">
-                <div class="slider-value" id="lightIntensityValue">1.5</div>
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-group-title">Зеркальные стены</div>
-            <select id="mirrorWallSelect">
-                <option value="none">Нет зеркальных стен</option>
-                <option value="right">Правая стена (красная)</option>
-                <option value="left">Левая стена (синяя)</option>
-                <option value="back">Задняя стена</option>
-                <option value="front">Передняя стена</option>
-                <option value="top">Потолок</option>
-                <option value="bottom">Пол</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-group-title">Прозрачность объектов</div>
-            
-            <div class="toggle-group">
-                <span class="toggle-label">Прозрачные кубы</span>
-                <input type="checkbox" id="cubeTransparencyToggle">
-            </div>
-            
-            <div class="slider-group">
-                <div class="slider-label">Кубы:</div>
-                <input type="range" id="cubeOpacity" min="0.1" max="1" step="0.1" value="0.6">
-                <div class="slider-value" id="cubeOpacityValue">0.6</div>
-            </div>
-            
-            <div class="toggle-group">
-                <span class="toggle-label">Прозрачные шары</span>
-                <input type="checkbox" id="sphereTransparencyToggle">
-            </div>
-            
-            <div class="slider-group">
-                <div class="slider-label">Шары:</div>
-                <input type="range" id="sphereOpacity" min="0.1" max="1" step="0.1" value="0.7">
-                <div class="slider-value" id="sphereOpacityValue">0.7</div>
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-group-title">Зеркальность объектов</div>
-            
-            <div class="toggle-group">
-                <span class="toggle-label">Кубы зеркальные</span>
-                <input type="checkbox" id="cubeMirrorToggle">
-            </div>
-            
-            <div class="toggle-group">
-                <span class="toggle-label">Шары зеркальные</span>
-                <input type="checkbox" id="sphereMirrorToggle">
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <div class="control-group-title">Прозрачность передней стены</div>
-            <input type="range" id="frontWallOpacity" min="0.1" max="1" step="0.1" value="0.3">
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
