@@ -3,146 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:image/gif;base64,R0lGODlhEAAQAMQfANPT09TU1NXV1dbW1tfX19jY2NnZ2dra2tzc3N3d3d7e3t/f3+Dg4OHh4eLi4uPj4+Tk5OXl5ebm5ufn5+jo6Onp6erq6uvr6+zs7O3t7e7u7u/v7/Dw8PHx8fLy8gD/AP///yH5BAEAAB8ALAAAAAAQABAAAAVq4CeOZGmeaKqubOu+cCzPdG3feK7vfO//wKBwSCwaj8ikcslsOp/QqHRKrVqv2Kx2y+16v+CweEwum8/otHrNbrvf8Lh8Tq/b7/i8fs/v+/+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmVqRADs=">
-    <title>Корнуэльская комната - Рейтрейсинг</title>
-    <link rel="stylesheet" href="style.css">
+  
+    
+    <style>
+        /* Общие стили страницы */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #2c3e50;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-weight: 300;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Основной контейнер */
+        .main-layout {
+            display: flex;
+            gap: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            align-items: flex-start;
+        }
+
+        /* Холст */
+        #canvas {
+            background: #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: block;
+        }
+
+        /* Панель настроек */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            border-bottom: 2px solid #007bff;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        /* Таблицы внутри настроек */
+        .settings-table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .settings-table th {
+            padding: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .settings-table td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .row-title {
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            padding-right: 15px !important;
+        }
+
+        /* Стилизация радиокнопок */
+        input[type="radio"], input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #007bff;
+        }
+
+        /* Секция рендера */
+        .render-zone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .render-zone img {
+            border-radius: 50%;
+            border: 2px solid #eee;
+        }
+
+        /* Кнопка */
+        .btn-render {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+            letter-spacing: 1px;
+        }
+
+        .btn-render:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,123,255,0.4);
+        }
+
+        .btn-render:active {
+            transform: translateY(0);
+        }
+
+        label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+    </style>
 </head>
 <body>
-    <div class="container">
 
-        <div class="main-content">
-            <div class="render-section">
-                <canvas id="canvas">Элемент canvas не поддерживается</canvas>
+    <h1>Корнуэльская комната</h1>
+
+    <div class="main-layout">
+        <canvas id="canvas" width="500" height="500">Элемент сanvas не поддерживается</canvas>
+
+        <div class="controls-panel">
+            
+            <section>
+                <h3>Объекты</h3>
+                <table class="settings-table">
+                    <tr>
+                        <th></th>
+                        <th>Сфера 1</th>
+                        <th>Сфера 2</th>
+                        <th>Куб 1</th>
+                        <th>Куб 2</th>
+                    </tr>
+                    <tr>
+                        <td class="row-title">Диффузность</td>
+                        <td><input type="radio" value="diffuse" checked name="sphere1"/></td>
+                        <td><input type="radio" value="diffuse" checked name="sphere2"/></td>
+                        <td><input type="radio" value="diffuse" checked name="cube1"/></td>
+                        <td><input type="radio" value="diffuse" checked name="cube2"/></td>
+                    </tr>
+                    <tr>
+                        <td class="row-title">Зеркальность</td>
+                        <td><input type="radio" value="reflective" name="sphere1"/></td>
+                        <td><input type="radio" value="reflective" name="sphere2"/></td>
+                        <td><input type="radio" value="reflective" name="cube1"/></td>
+                        <td><input type="radio" value="reflective" name="cube2"/></td>
+                    </tr>
+                    <tr>
+                        <td class="row-title">Прозрачность</td>
+                        <td><input type="radio" value="transparent" name="sphere1"/></td>
+                        <td><input type="radio" value="transparent" name="sphere2"/></td>
+                        <td><input type="radio" value="transparent" name="cube1"/></td>
+                        <td><input type="radio" value="transparent" name="cube2"/></td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+                <h3>Стены комнаты</h3>
+                <table class="settings-table">
+                    <tr>
+                        <th></th>
+                        <th>Верх</th>
+                        <th>Низ</th>
+                        <th>Лево</th>
+                        <th>Право</th>
+                        <th>Перед</th>
+                        <th>Задняя</th>
+                    </tr>
+                    <tr>
+                        <td class="row-title">Диффузность</td>
+                        <td><input type="radio" value="diffuse" checked name="upwall"/></td>
+                        <td><input type="radio" value="diffuse" checked name="downwall"/></td>
+                        <td><input type="radio" value="diffuse" checked name="leftwall"/></td>
+                        <td><input type="radio" value="diffuse" checked name="rightwall"/></td>
+                        <td><input type="radio" value="diffuse" checked name="frontwall"/></td>
+                        <td><input type="radio" value="diffuse" checked name="backwall"/></td>
+                    </tr>
+                    <tr>
+                        <td class="row-title">Зеркальность</td>
+                        <td><input type="radio" value="reflective" name="upwall"/></td>
+                        <td><input type="radio" value="reflective" name="downwall"/></td>
+                        <td><input type="radio" value="reflective" name="leftwall"/></td>
+                        <td><input type="radio" value="reflective" name="rightwall"/></td>
+                        <td><input type="radio" value="reflective" name="frontwall"/></td>
+                        <td><input type="radio" value="reflective" name="backwall"/></td>
+                    </tr>
+                </table>
+            </section>
+
+            <section>
+            <label>
+                <input type="checkbox" id="light1"> Дополнительный свет
+            </label>
+            <div id="light-coords" style="margin-top: 10px; display: flex; gap: 10px; font-size: 12px;">
+                <div>X: <input type="number" id="lx" value="-9" step="0.5" style="width: 40px;"></div>
+                <div>Y: <input type="number" id="ly" value="0" step="0.5" style="width: 40px;"></div>
+                <div>Z: <input type="number" id="lz" value="2" step="0.5" style="width: 40px;"></div>
+            </div>
+            </section>
+
+            <div class="render-zone">
+          
+                <button id="render" class="btn-render">РЕНДЕР</button>
+              
             </div>
 
-            <div class="controls-section">
-                <div class="control-group">
-                    <h3>Объекты сцены</h3>
-                    <div class="checkbox-grid">
-                        <div class="checkbox-item sphere1">
-                            <input type="checkbox" id="sphere1-reflective">
-                            <div class="color-preview"></div>
-                            <label for="sphere1-reflective">Сфера 1 (зеркало)</label>
-                        </div>
-                        <div class="checkbox-item sphere1">
-                            <input type="checkbox" id="sphere1-transparent">
-                            <div class="color-preview"></div>
-                            <label for="sphere1-transparent">Сфера 1 (прозрачность)</label>
-                        </div>
-                        <div class="checkbox-item sphere2">
-                            <input type="checkbox" id="sphere2-reflective">
-                            <div class="color-preview"></div>
-                            <label for="sphere2-reflective">Сфера 2 (зеркало)</label>
-                        </div>
-                        <div class="checkbox-item sphere2">
-                            <input type="checkbox" id="sphere2-transparent">
-                            <div class="color-preview"></div>
-                            <label for="sphere2-transparent">Сфера 2 (прозрачность)</label>
-                        </div>
-                        <div class="checkbox-item cube1">
-                            <input type="checkbox" id="cube1-reflective">
-                            <div class="color-preview"></div>
-                            <label for="cube1-reflective">Куб 1 (зеркало)</label>
-                        </div>
-                        <div class="checkbox-item cube1">
-                            <input type="checkbox" id="cube1-transparent">
-                            <div class="color-preview"></div>
-                            <label for="cube1-transparent">Куб 1 (прозрачность)</label>
-                        </div>
-                        <div class="checkbox-item cube2">
-                            <input type="checkbox" id="cube2-reflective">
-                            <div class="color-preview"></div>
-                            <label for="cube2-reflective">Куб 2 (зеркало)</label>
-                        </div>
-                        <div class="checkbox-item cube2">
-                            <input type="checkbox" id="cube2-transparent">
-                            <div class="color-preview"></div>
-                            <label for="cube2-transparent">Куб 2 (стекло)</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <h3>Стены (зеркальные)</h3>
-                    <div class="checkbox-grid">
-                        <div class="checkbox-item wall">
-                            <input type="checkbox" id="upwall-reflective">
-                            <div class="color-preview"></div>
-                            <label for="upwall-reflective">Верхняя</label>
-                        </div>
-                        <div class="checkbox-item wall">
-                            <input type="checkbox" id="downwall-reflective">
-                            <div class="color-preview"></div>
-                            <label for="downwall-reflective">Нижняя</label>
-                        </div>
-                        <div class="checkbox-item wall">
-                            <input type="checkbox" id="leftwall-reflective">
-                            <div class="color-preview"></div>
-                            <label for="leftwall-reflective">Левая</label>
-                        </div>
-                        <div class="checkbox-item wall">
-                            <input type="checkbox" id="rightwall-reflective">
-                            <div class="color-preview"></div>
-                            <label for="rightwall-reflective">Правая</label>
-                        </div>
-                        <div class="checkbox-item wall">
-                            <input type="checkbox" id="frontwall-reflective">
-                            <div class="color-preview"></div>
-                            <label for="frontwall-reflective">Передняя</label>
-                        </div>
-                        <div class="checkbox-item wall">
-                            <input type="checkbox" id="backwall-reflective">
-                            <div class="color-preview"></div>
-                            <label for="backwall-reflective">Задняя</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="control-group">
-                    <div class="toggle-switch">
-                        <input type="checkbox" id="light1-toggle">
-                        <label for="light1-toggle">Второй источник света</label>
-                    </div>
-                    
-                    <div id="light-controls-container" style="display: none;">
-                        <div class="slider-container">
-                            <label>Позиция X:</label>
-                            <input type="range" id="light-x" min="-15" max="15" value="-9" step="0.5">
-                            <div class="value-display">
-                                <span>-15</span>
-                                <span id="light-x-value">-9</span>
-                                <span>15</span>
-                            </div>
-                        </div>
-                        <div class="slider-container">
-                            <label>Позиция Y:</label>
-                            <input type="range" id="light-y" min="-15" max="15" value="0" step="0.5">
-                            <div class="value-display">
-                                <span>-15</span>
-                                <span id="light-y-value">0</span>
-                                <span>15</span>
-                            </div>
-                        </div>
-                        <div class="slider-container">
-                            <label>Позиция Z:</label>
-                            <input type="range" id="light-z" min="-15" max="15" value="2" step="0.5">
-                            <div class="value-display">
-                                <span>-15</span>
-                                <span id="light-z-value">2</span>
-                                <span>15</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="render-btn-container">
-                    <button id="render" class="render-btn">Запустить рендеринг</button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
