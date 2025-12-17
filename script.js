@@ -44,12 +44,15 @@ class Sphere extends Shape {
     
     intersect(ray) {
         const toSphere = Vector.sub(this.pos, ray.origin);
+        //Мы проецируем вектор toSphere на направление луча
+        //Длина отрезка от начала луча до точки на луче, которая находится ближе всего к центру сферы.
         const proj = Vector.dot(toSphere, ray.dir);
+        //Она вычисляет квадрат расстояния от центра сферы до ближайшей к ней точки на прямой луча.
         const d2 = toSphere.length ** 2 - proj ** 2;
         const r2 = this.radius ** 2;
-        
+        //proj < 0: Сфера находится "сзади" луча.
         if (proj < 0 || d2 > r2) return { hit: false, dist: Infinity };
-        
+        //расстояние от камеры до ближайшей точки поверхности сферы, в которую врезался луч.
         const dist = proj - Math.sqrt(r2 - d2);
         const point = Vector.add(ray.origin, Vector.mul(ray.dir, dist));
         const normal = Vector.sub(point, this.pos).norm();
@@ -68,17 +71,20 @@ class Triangle extends Shape {
         const v0v1 = Vector.sub(this.points[1], this.points[0]);
         const v0v2 = Vector.sub(this.points[2], this.points[0]);
         const normal = Vector.cross(v0v1, v0v2).norm();
-        
+
+        //Если denom близок к 0: луч летит почти параллельно треугольнику.
         const denom = Vector.dot(normal, ray.dir);
         if (Math.abs(denom) < 0.0001) return { hit: false, dist: Infinity };
-        
+        //перпендикуляр от камеры до  плоскости, в которой лежит треугольник.
         const dist = Vector.dot(normal, Vector.sub(this.points[0], ray.origin)) / denom;
+        //Это значит, что треугольник находится у нас за спиной.
         if (dist <= 0) return { hit: false, dist: Infinity };
-        
         const point = Vector.add(ray.origin, Vector.mul(ray.dir, dist));
         
         const checkEdge = (a, b, p) => 
-            Vector.dot(Vector.cross(Vector.sub(b, a), Vector.sub(p, a)), normal) >= 0;
+        
+        //Если точка $P$ внутри треугольника: временный перпендикуляр будет смотреть в ту же сторону, что и основная нормаль треугольника.
+        Vector.dot(Vector.cross(Vector.sub(b, a), Vector.sub(p, a)), normal) >= 0;
         
         if (!checkEdge(this.points[0], this.points[1], point) ||
             !checkEdge(this.points[1], this.points[2], point) ||
@@ -117,6 +123,7 @@ class Box extends Shape {
         const p = this.pos;
         
         this.faces = [
+          
             new Rectangle([
                 new Vector(-x, y, -z).add(p), new Vector(-x, y, z).add(p),
                 new Vector(x, y, z).add(p), new Vector(x, y, -z).add(p)
@@ -224,7 +231,7 @@ const spheres = [
     new Sphere(new Vector(-3, -1, 8), 1.5, { 
         color: new Color(255, 215, 0), reflective: false, transparent: false 
     }),
-    new Sphere(new Vector(4, -4, 3), 2, { 
+    new Sphere(new Vector(4, -4, 5), 1.8, { 
         color: new Color(255, 255, 255), reflective: false, transparent: false 
     })
 ];
@@ -233,19 +240,19 @@ const boxes = [
     new Box(new Vector(-3, -4, 5), 3, 2.5, 2, { 
         color: new Color(0, 150, 255), reflective: false, transparent: false 
     }),
-    new Box(new Vector(3, 1, 7), 2.8, 2.8, 2.8, { 
+    new Box(new Vector(3, -2, 7), 2.8, 2.8, 2.8, { 
         color: new Color(255, 100, 100), reflective: false, transparent: false 
     })
 ];
 
-const extraLight = new Light(new Vector(0, -8, 5), 2);
-const lights = [new Light(new Vector(0, 9, 5), 2)];
+const extraLight = new Light(new Vector(0, -8, 5), 1);
+const lights = [new Light(new Vector(0, 9, 5), 1)];
 const scene = new Scene([...walls, ...spheres, ...boxes], lights, new Color(10, 10, 15));
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const W = 500, H = 500;
-const DEPTH = 4;
+const DEPTH = 5;
 const cam = new Camera(new Vector(0, 0, -3), Math.PI / 1.5);
 
 function trace(ray, depth, skipObj = null) {
@@ -264,45 +271,58 @@ function trace(ray, depth, skipObj = null) {
     }
     
     if (!hit) return scene.bg;
-    
+    //Если в сцене несколько лампочек, мы будем прибавлять свет от каждой из них в эту переменную.
     let light = 0;
     for (let l of scene.lights) {
+        //Это вектор направление к свету.
         const toLight = Vector.sub(l.pos, hit.point).norm();
+        //расстояние от точки на объекте до лампочки.
         const distToLight = Vector.sub(l.pos, hit.point).length;
-        
+        //По умолчанию мы считаем, что точка освещена (тени нет), пока не докажем обратное.
         let inShadow = false;
         for (let obj of scene.objects) {
             if (obj === hit.obj) continue;
+            //Мы выпускаем новый луч из точки, в которую попали (hit.point), и направляем его прямо в сторону лампочки (toLight).
             const shadow = obj.intersect(new Ray(hit.point, toLight));
             if (shadow.hit && shadow.dist < distToLight) {
                 inShadow = true;
                 break;
             }
         }
-        
+        //угол между поверхностью и светом. Если свет падает прямо (перпендикулярно), dot будет равен 1 (максимальная яркость).
+        //Если свет скользит вдоль поверхности, dot будет равен 0.
         const dot = Math.max(0, Vector.dot(toLight, hit.normal));
         light += inShadow ? 0.5 * l.intensity * dot : l.intensity * dot;
     }
+    //Это нужно для того, чтобы при добавлении новых источников сцена не становилась ослепительно белой. Яркость в тени не упадет ниже 0.3
     light = Math.max(0.3, light / scene.lights.length);
-    
     let color = hit.obj.props.color.mul(light);
     
     if (hit.obj.props.reflective) {
+        // Расчет направления отражения
         const reflDir = Vector.sub(ray.dir, Vector.mul(hit.normal, 2 * Vector.dot(ray.dir, hit.normal)));
+        //цвет того, что находится «в зеркале».
         const reflColor = trace(new Ray(hit.point, reflDir), depth - 1, hit.obj);
+        //Здесь мы берем собственный цвет объекта (например, серый металл) и добавляем к нему то, что «увидело» отражение. Чем больше «отскоков» сделал луч, тем слабее и тусклее становится отражение.
         color = color.add(reflColor.mul(depth / DEPTH / 2));
     }
     
     if (hit.obj.props.transparent) {
+       //луч мог пройти сквозь объект, преломившись на границе сред.
+       //Здесь мы вычисляем косинус угла падения.
         const cosi = -Math.max(-1, Math.min(1, Vector.dot(ray.dir, hit.normal)));
-        let [eta1, eta2] = [1, 0.9];
+        let [eta1, eta2] = [1, 0.8];
         let n = hit.normal;
+        //Значит cosi > 0 означает: ЛУЧ ВХОДИТ В ОБЪЕКТ
+        //нормаль всегда смотрела НАВСТРЕЧУ лучу
         if (cosi < 0) { [eta1, eta2] = [eta2, eta1]; n = n.mul(-1); }
-        
+        //Отношение этих чисел определяет «силу» преломления.
         const eta = eta1 / eta2;
+        //Если k < 0: Происходит полное внутреннее отражение.луч НЕ МОЖЕТ выйти из более плотной среды в менее плотную и полностью отражается обратно.
         const k = 1 - eta * eta * (1 - cosi * cosi);
         
         if (k >= 0) {
+            //Программа берет входящий луч и «сгибает» его на границе сред.
             const refrDir = Vector.add(Vector.mul(ray.dir, eta), Vector.mul(n, eta * cosi - Math.sqrt(k)));
             const refrColor = trace(new Ray(hit.point, refrDir), depth - 1, hit.obj);
             color = color.add(refrColor.mul(depth / DEPTH / 2));
@@ -311,7 +331,6 @@ function trace(ray, depth, skipObj = null) {
     
     return color;
 }
-
 function render() {
     const inputs = ['lx', 'ly', 'lz'];
     if (inputs.every(id => document.getElementById(id))) {
@@ -324,6 +343,7 @@ function render() {
     
     for (let y = 0; y < H; y++) {
         for (let x = 0; x < W; x++) {
+           //Это координаты точки на виртуальном холсте, который находится на расстоянии 1 от камеры по оси $Z$.
             const sx = (2 * (x + 0.5) / W - 1) * Math.tan(cam.fov / 2) * (W / H);
             const sy = -(2 * (y + 0.5) / H - 1) * Math.tan(cam.fov / 2);
             const dir = new Vector(sx, sy, 1).norm();
